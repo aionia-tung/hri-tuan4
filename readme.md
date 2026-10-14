@@ -2,13 +2,6 @@
 
 Du an thuc hien mo phong robot **TurtleBot 4** trong moi truong **Ignition Gazebo**, xay dung ban do 2D bang **SLAM Toolbox**, dinh vi robot bang **AMCL** va dieu huong tu dong khong va cham bang **Nav2** tren **ROS 2 Humble**. Mac dinh repository dung world **depot** vi nhe hon **maze**.
 
----
-
-## Lien Ket Nop Bai
-
-- **Video demo Google Drive:** TODO: cap nhat link public
-- **GitHub repository:** TODO: cap nhat link repository public
-- **Bao cao PDF:** [report/Bao_cao_Thuc_hanh_04.pdf](./report/Bao_cao_Thuc_hanh_04.pdf)
 
 ---
 
@@ -29,17 +22,14 @@ tb4_maps/
 │   ├── tb4_slam.launch.py
 │   └── tb4_nav2.launch.py
 ├── scripts/
-│   ├── check_submission.sh
 │   ├── run_mapping.md
-│   ├── run_navigation.md
-│   └── troubleshooting.md
+│   └── run_navigation.md
 ├── report/
 │   ├── Bao_cao_Thuc_hanh_04.md
 │   └── Bao_cao_Thuc_hanh_04.pdf
 └── readme.md
 ```
 
-> Neu luu map voi ten `maze_map`, doi ten file thanh `map.yaml` va `map.pgm` truoc khi nop, hoac cap nhat lai duong dan trong README cho dung voi file thuc te.
 
 ---
 
@@ -70,8 +60,6 @@ Nap moi truong ROS trong moi terminal:
 source /opt/ros/humble/setup.bash
 ```
 
-Co the them dong sau vao `~/.bashrc` de tu dong source ROS:
-
 ```bash
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
@@ -87,20 +75,6 @@ cd ~/tb4_ws
 colcon build --packages-select tb4_maps
 source install/setup.bash
 ```
-
-Neu dang thao tac truc tiep tai `/home/aionia/tb4_maps`, van co the chay cac lenh goc cua TurtleBot 4 ben duoi ma khong can build package.
-
-Kiem tra nhanh bo bai nop:
-
-```bash
-cd /home/aionia/tb4_maps
-bash scripts/check_submission.sh
-```
-
-Neu Gazebo/RViz/teleop bao loi, xem [scripts/troubleshooting.md](./scripts/troubleshooting.md).
-
----
-
 ## Phan 1 - Chay TurtleBot 4 Simulation
 
 Mo terminal 1 va khoi chay TurtleBot 4 trong world depot kem RViz2:
@@ -151,30 +125,10 @@ Dung robot:
 ```bash
 ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist \
 "{linear: {x: 0.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 0.0}}"
-```
-
-Neu da build package `tb4_maps`, co the chay bang launch file cua repository:
 
 ```bash
 ros2 launch tb4_maps tb4_simulation.launch.py
 ```
-
-World co san da kiem tra:
-
-| World | File SDF | Nhan xet |
-| :--- | :--- | :--- |
-| `depot` | 22 dong | Nho nhat, nen dung khi may yeu hoac can demo nhanh |
-| `warehouse` | 259 dong | Trung binh, nhieu vat the hon |
-| `maze` | 1044 dong | Lon hon, phu hop bai maze nhung nang hon |
-
-Doi world khi can:
-
-```bash
-ros2 launch tb4_maps tb4_simulation.launch.py sim_world:=depot
-ros2 launch tb4_maps tb4_simulation.launch.py sim_world:=warehouse
-ros2 launch tb4_maps tb4_simulation.launch.py sim_world:=maze
-```
-
 ---
 
 ## Phan 2 - Xay Dung Ban Do Bang SLAM Toolbox
@@ -286,29 +240,8 @@ Thiet lap vi tri ban dau tren RViz2:
 
 Neu laser scan khop voi map va robot pose on dinh, localization bang AMCL da thanh cong.
 
-### Neu robot khong hien tren map
 
-Kiem tra theo thu tu sau:
-
-1. Dam bao da co file `/home/aionia/tb4_maps/maps/map.yaml` va `/home/aionia/tb4_maps/maps/map.pgm`.
-2. Mo `map.yaml` va kiem tra dong `image:` tro dung ten anh map, thuong la `image: map.pgm`.
-3. Trong RViz2, dat **Fixed Frame** la `map`.
-4. Bat cac display **Map**, **RobotModel**, **LaserScan**, **TF**.
-5. Bam **2D Pose Estimate**, click va keo mui ten dung vi tri robot trong Gazebo.
-6. Cho AMCL hoi tu den khi laser scan trung voi tuong tren map.
-
-Lenh kiem tra TF:
-
-```bash
-ros2 run tf2_ros tf2_echo odom base_link
-ros2 run tf2_ros tf2_echo map base_link
-```
-
-Neu `odom -> base_link` co nhung `map -> base_link` khong co, thuong la chua set **2D Pose Estimate** hoac AMCL chua chay dung map.
-
----
-
-## Phan 4 - Navigation Tu Dong Voi Nav2
+## Phan 3 - Navigation Tu Dong Voi Nav2
 
 Khi localization da dung:
 
@@ -375,37 +308,7 @@ Khi nguoi dung dat Nav2 Goal, Nav2 planner tao global path tren ban do. Costmap 
 
 ---
 
-## Ket Qua Thuc Nghiem
 
-Sau khi chay thuc nghiem, bo sung anh minh hoa vao bao cao PDF va co the them vao repository:
-
-- Anh robot trong Gazebo world da su dung.
-- Anh RViz2 hien thi `/scan`.
-- Anh qua trinh xay dung ban do bang SLAM Toolbox.
-- Anh ban do hoan chinh.
-- Anh localization sau khi load lai map.
-- Anh robot thuc hien Nav2 Goal, co global path va costmap.
-
-Neu file map da duoc them vao repo, co the xem truc tiep:
-
-![Ban do da tao](./maps/map.pgm)
-
----
-
-## Checklist Nop Bai
-
-- [ ] Chay duoc TurtleBot 4 Simulation voi Gazebo.
-- [ ] Kiem tra duoc `/scan`, `/odom`, `/cmd_vel`.
-- [ ] Chay duoc SLAM Toolbox va quan sat map tren RViz2.
-- [ ] Luu duoc `maps/map.yaml` va `maps/map.pgm`.
-- [ ] Load lai map va localization dung bang AMCL.
-- [ ] Thuc hien thanh cong it nhat 03 Nav2 Goal khac nhau.
-- [ ] Quay video demo va upload Google Drive public.
-- [ ] Them bao cao PDF vao `report/Bao_cao_Thuc_hanh_04.pdf`.
-- [ ] Day repository len GitHub public.
-- [ ] Cap nhat link video va GitHub trong README.
-
----
 
 ## Tai Lieu Tham Khao
 
